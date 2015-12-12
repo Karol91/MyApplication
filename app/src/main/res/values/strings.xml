@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Portfel</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="porftel_mobile">PORTFEL MOBILE</string>
+    <string name="registration">Registration</string>
+
+</resources>

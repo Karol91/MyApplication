@@ -1,0 +1,33 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:paddingBottom="@dimen/activity_vertical_margin" tools:context=".StartMenu">
+
+    <TextView android:text="@string/porftel_mobile" android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/txtVPortfel"
+        android:textSize="@dimen/px20"
+        android:textIsSelectable="true" />
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/imgBtnLogin"
+        android:text="Login"
+        android:layout_marginTop="58dp"
+        android:layout_below="@+id/txtVPortfel"
+        android:layout_centerHorizontal="true" />
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/imgBtnRegistration"
+        android:layout_below="@+id/imgBtnLogin"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="69dp"
+        android:text="@string/registration" />
+
+</RelativeLayout>
