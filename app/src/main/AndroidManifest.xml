@@ -26,6 +26,14 @@
             android:label="@string/title_activity_login"
             android:windowSoftInputMode="adjustResize|stateVisible" >
         </activity>
+        <activity
+            android:name=".portfelPanelActivity"
+            android:label="@string/title_activity_portfel_panel" >
+        </activity>
+        <activity
+            android:name=".portfelPanel"
+            android:label="@string/title_activity_portfel_panel" >
+        </activity>
     </application>
 
 </manifest>

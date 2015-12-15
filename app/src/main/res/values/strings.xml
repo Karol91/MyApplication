@@ -6,5 +6,10 @@
     <string name="action_settings">Settings</string>
     <string name="porftel_mobile">PORTFEL MOBILE</string>
     <string name="registration">Registration</string>
+    <string name="title_activity_portfel_panel">Portfel Panel</string>
+    <string name="strBit">BitCoins</string>
+    <string name="strPLC">PLC - Polcoin</string>
+    <string name="strPEERCOIN">PeerCoin</string>
+    <string name="strBC">BitCoin</string>
 
 </resources>
