@@ -34,6 +34,14 @@
             android:name=".portfelPanel"
             android:label="@string/title_activity_portfel_panel" >
         </activity>
+        <activity
+            android:name=".wallet1"
+            android:label="@string/title_activity_wallet1"
+            android:parentActivityName=".portfelPanel" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.team.quattro.portfel.portfelPanel" />
+        </activity>
     </application>
 
 </manifest>

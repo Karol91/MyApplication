@@ -4,50 +4,46 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     android:paddingBottom="@dimen/activity_vertical_margin"
-    tools:context="com.team.quattro.portfel.portfelPanel">
+    tools:context="com.team.quattro.portfel.wallet1">
 
-    <TextView android:text="Panel główny portfela" android:layout_width="wrap_content"
+    <TextView android:text="Stan Portfela" android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/textView" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Stan kont"
-        android:id="@+id/textView"
-        android:layout_below="@+id/textView"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginTop="48dp" />
+        android:id="@+id/textView2" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/imgBtn1Wallet"
-        android:layout_below="@+id/textView"
+        android:id="@+id/imgBtnPayment"
+        android:layout_below="@+id/textView2"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:text="@string/strBit"
-        android:layout_alignRight="@+id/textView"
-        android:layout_alignEnd="@+id/textView" />
+        android:text="Wpłata" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/imgBtn2Wallet"
-        android:layout_below="@+id/imgBtn1Wallet"
+        android:id="@+id/imgBtnWithdraw"
+        android:layout_below="@+id/imgBtnPayment"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:text="@string/strPEERCOIN" />
+        android:text="Wypłata" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/imgBtn3Wallet"
-        android:layout_below="@+id/imgBtn2Wallet"
+        android:id="@+id/imgBtnStory"
+        android:layout_below="@+id/imgBtnWithdraw"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:text="@string/strPLC" />
+        android:text="Historia operacji" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/imgBtnExchange"
+        android:layout_below="@+id/imgBtnStory"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:text="Przewalutowanie" />
 
 </RelativeLayout>

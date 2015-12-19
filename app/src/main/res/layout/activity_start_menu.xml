@@ -28,6 +28,7 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
         android:layout_marginTop="69dp"
-        android:text="@string/registration" />
+        android:text="@string/registration"
+        android:visibility="invisible" />
 
 </RelativeLayout>
