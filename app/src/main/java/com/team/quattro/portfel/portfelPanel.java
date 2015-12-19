@@ -35,11 +35,11 @@ public class portfelPanel extends ActionBarActivity {
                     startActivity(intentWallet);
                     break;
                 case R.id.imgBtn2Wallet:
-                    intentWallet = new Intent(portfelPanel.this,LoginActivity.class);
+                    intentWallet = new Intent(portfelPanel.this,wallet2.class);
                     startActivity(intentWallet);
                     break;
                 case R.id.imgBtn3Wallet:
-                    intentWallet = new Intent(portfelPanel.this,LoginActivity.class);
+                    intentWallet = new Intent(portfelPanel.this,wallet3.class);
                     startActivity(intentWallet);
                     break;
             }

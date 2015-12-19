@@ -15,7 +15,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/imgBtnLogin"
-        android:text="Login"
+        android:text="@string/loginPL"
         android:layout_marginTop="58dp"
         android:layout_below="@+id/txtVPortfel"
         android:layout_centerHorizontal="true" />

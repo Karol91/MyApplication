@@ -2,17 +2,28 @@
 <resources>
 
     <string name="app_name">Portfel</string>
-    <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
     <string name="porftel_mobile">PORTFEL MOBILE</string>
     <string name="registration">Registration</string>
     <string name="title_activity_portfel_panel">Portfel Panel</string>
     <string name="strBit">BitCoins</string>
-    <string name="strPLC">PLC - Polcoin</string>
+    <string name="strPLC">PLC - PolCoin</string>
     <string name="strPEERCOIN">PeerCoin</string>
     <string name="strBC">BitCoin</string>
-    <string name="prompt_password">Password</string>
     <string name="password">Password</string>
-    <string name="title_activity_wallet1">wallet1</string>
+    <string name="title_activity_wallet1">Portfel BitCoins</string>
+    <string name="login">Login</string>
+    <string name="haslo">Haslo</string>
+    <string name="logowanie_rejestracja">Zaloguj / zarejestruj</string>
+    <string name="title_activity_wallet2">PeerCoin</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="payment">Wpłata</string>
+    <string name="withdraw">Wypłata</string>
+    <string name="operationStory">Historia operacji</string>
+    <string name="exchange">Przewalutowanie</string>
+    <string name="balanceAccount">Stan konta</string>
+    <string name="title_activity_wallet3">PolCoin</string>
+    <string name="chooseWallet">Wybierz portfel</string>
+    <string name="loginPL">Zaloguj</string>
 
 </resources>

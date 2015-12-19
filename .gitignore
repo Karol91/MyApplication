@@ -57,3 +57,5 @@ build/intermediates/dex-cache/cache.xml
 .gradle/2.2.1/taskArtifacts/fileSnapshots.bin
 .gradle/2.2.1/taskArtifacts/fileHashes.bin
 build/intermediates/model_data.bin
+.gradle/2.2.1/taskArtifacts/cache.properties.lock
+.gradle/2.2.1/taskArtifacts/cache.properties.lock
