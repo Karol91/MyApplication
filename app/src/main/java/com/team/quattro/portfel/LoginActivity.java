@@ -4,15 +4,17 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.LoaderManager.LoaderCallbacks;
-import android.content.ContentResolver;
+import android.content.Context;
 import android.content.CursorLoader;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
+import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.AsyncTask;
-
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
@@ -27,33 +29,26 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserException;
+import org.xmlpull.v1.XmlPullParserFactory;
+
+import java.io.BufferedInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-
-/**
- * A login screen that offers login via email/password.
- */
 public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
 
-    /**
-     * A dummy authentication store containing known user names and passwords.
-     * TODO: remove after connecting to a real authentication system.
-     */
-    private static final String[] DUMMY_CREDENTIALS = new String[]{
-            "test@test:12345",
-            "test:a"
-    };
-    /**
-     * Keep track of the login task to ensure we can cancel it if requested.
-     */
-    private UserLoginTask mAuthTask = null;
 
-    // UI references.
-    private AutoCompleteTextView mEmailView;
+    private AutoCompleteTextView mLoginView;
     private EditText mPasswordView;
     private View mProgressView;
     private View mLoginFormView;
+    private TextView infoText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,7 +56,7 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
         setContentView(R.layout.activity_login);
 
         // Set up the login form.
-        mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
+        mLoginView = (AutoCompleteTextView) findViewById(R.id.email);
         populateAutoComplete();
 
         mPasswordView = (EditText) findViewById(R.id.password);
@@ -86,29 +81,23 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
 
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
+
+        infoText = (TextView) findViewById(R.id.textViewEnterData);
     }
 
     private void populateAutoComplete() {
         getLoaderManager().initLoader(0, null, this);
     }
 
-
-    /**
-     * Attempts to sign in or register the account specified by the login form.
-     * If there are form errors (invalid email, missing fields, etc.), the
-     * errors are presented and no actual login attempt is made.
-     */
     public void attemptLogin() {
-        if (mAuthTask != null) {
-            return;
-        }
+
 
         // Reset errors.
-        mEmailView.setError(null);
+        mLoginView.setError(null);
         mPasswordView.setError(null);
 
         // Store values at the time of the login attempt.
-        String email = mEmailView.getText().toString();
+        String login = mLoginView.getText().toString();
         String password = mPasswordView.getText().toString();
 
         boolean cancel = false;
@@ -123,13 +112,13 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
         }
 
         // Check for a valid email address.
-        if (TextUtils.isEmpty(email)) {
-            mEmailView.setError(getString(R.string.error_field_required));
-            focusView = mEmailView;
+        if (TextUtils.isEmpty(login)) {
+            mLoginView.setError(getString(R.string.error_field_required));
+            focusView = mLoginView;
             cancel = true;
-        } else if (!isEmailValid(email)) {
-            mEmailView.setError(getString(R.string.error_invalid_email));
-            focusView = mEmailView;
+        } else if (!isEmailValid(login)) {
+            mLoginView.setError(getString(R.string.error_invalid_email));
+            focusView = mLoginView;
             cancel = true;
         }
 
@@ -141,8 +130,10 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
             showProgress(true);
-            mAuthTask = new UserLoginTask(email, password);
-            mAuthTask.execute((Void) null);
+            Context context = LoginActivity.this;
+
+                infoText.setText("Please wait.");
+                new UserLoginTask(login, password).execute();
         }
     }
 
@@ -243,64 +234,159 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
                 new ArrayAdapter<String>(LoginActivity.this,
                         android.R.layout.simple_dropdown_item_1line, emailAddressCollection);
 
-        mEmailView.setAdapter(adapter);
+        mLoginView.setAdapter(adapter);
     }
 
+    public void Alert (String title, String errorMessage)
+    {
+        new AlertDialog.Builder(LoginActivity.this)
+                .setTitle(title)
+                .setMessage(errorMessage)
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        finish();
+                    }
+                })
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .show();
+    }
+
+    public static boolean CheckInternet(Context context)
+    {
+        ConnectivityManager connect = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        android.net.NetworkInfo wifi = connect.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+        android.net.NetworkInfo mobile = connect.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
+
+        return wifi.isConnected() || mobile.isConnected();
+    }
+
+
+
+
+    private User parseXML( XmlPullParser parser ) throws XmlPullParserException, IOException {
+
+        int eventType = parser.getEventType();
+        User result = new User();
+
+        while( eventType!= XmlPullParser.END_DOCUMENT) {
+            String name = null;
+
+            switch(eventType)
+            {
+                case XmlPullParser.START_TAG:
+                    name = parser.getName();
+
+                    if ( name.equals("login")) {
+                        result.login = parser.nextText();
+                        break;
+                    }
+                    else if (name.equals("password")){
+                        result.password = parser.nextText();
+                        break;
+                    }
+                    else if (name.equals("restKey")){
+                        result.restKey = parser.nextText();
+                        break;
+                    }
+                    else if (name.equals("status")){
+                        result.status = Integer.parseInt(parser.nextText());
+                        break;
+                    }
+                    break;
+
+                case XmlPullParser.END_TAG:
+                    break;
+            } // end switch
+
+            eventType = parser.next();
+        } // end while
+
+        return result;
+    }
     /**
      * Represents an asynchronous login/registration task used to authenticate
      * the user.
      */
-    public class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
+    public class UserLoginTask extends AsyncTask<Void, Void, User> {
 
-        private final String mEmail;
+        private final String mLogin;
         private final String mPassword;
 
-        UserLoginTask(String email, String password) {
-            mEmail = email;
+        UserLoginTask(String login, String password) {
+            mLogin = login;
             mPassword = password;
         }
 
         @Override
-        protected Boolean doInBackground(Void... params) {
-            // TODO: attempt authentication against a network service.
+        protected User doInBackground(Void... params) {
 
-            try {
-                // Simulate network access.
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
-                return false;
-            }
+            String serverAddress = getResources().getString(R.string.serverAddress);
+            final String urlString = serverAddress + "userServices/getUser?l="+mLogin+"&p="+mPassword;
+            InputStream in = null;
+            User userVO = null;
+            HttpURLConnection urlConnection = null;
+                try {
 
-            for (String credential : DUMMY_CREDENTIALS) {
-                String[] pieces = credential.split(":");
-                if (pieces[0].equals(mEmail)) {
-                    // Account exists, return true if the password matches.
-                    return pieces[1].equals(mPassword);
+                    URL url = new URL(urlString);
+                    urlConnection = (HttpURLConnection) url.openConnection();
+                    in = new BufferedInputStream(urlConnection.getInputStream());
+                } catch (Exception e) {
+                    finish();
+
                 }
-            }
 
-            // TODO: register the new account here.
-            return true;
+            XmlPullParserFactory pullParserFactory;
+            try {
+                pullParserFactory = XmlPullParserFactory.newInstance();
+                XmlPullParser parser = pullParserFactory.newPullParser();
+
+                parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false);
+                parser.setInput(in, null);
+                userVO = parseXML(parser);
+
+                } catch (XmlPullParserException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                e.printStackTrace();
+            }
+            finally {
+                urlConnection.disconnect();
+            }
+            return userVO;
         }
 
+
+
         @Override
-        protected void onPostExecute(final Boolean success) {
-            mAuthTask = null;
+        protected void onPostExecute(User user) {
+
             showProgress(false);
 
-            if (success) {
-                Intent intentPortfel = new Intent(LoginActivity.this,portfelPanel.class);
+            if (user.status == 0) {
+                Intent intentPortfel = new Intent(LoginActivity.this, portfelPanel.class);
+                intentPortfel.putExtra("user",user);
                 startActivity(intentPortfel);
-                //finish();
-            } else {
-                mPasswordView.setError(getString(R.string.error_incorrect_password));
-                mPasswordView.requestFocus();
+                finish();
+            }
+            else
+            {
+                new AlertDialog.Builder(LoginActivity.this)
+                        .setTitle("Login Error")
+                        .setMessage("Login or password incorrect")
+                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+
+                            }
+                        })
+                        .setIcon(android.R.drawable.ic_dialog_alert)
+                        .show();
+                infoText.setText(getResources().getText(R.string.strEnterData));
             }
         }
 
         @Override
         protected void onCancelled() {
-            mAuthTask = null;
+
             showProgress(false);
         }
     }

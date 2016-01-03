@@ -1,11 +1,11 @@
 <resources>
-    <string name="title_activity_login">Logowanie</string>
+    <string name="title_activity_login">Login</string>
 
     <!-- Strings related to login -->
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Password (optional)</string>
-    <string name="action_sign_in">Logowanie</string>
-    <string name="action_sign_in_short">Logowanie</string>
+    <string name="action_sign_in">Login</string>
+    <string name="action_sign_in_short">Login</string>
 
     <string name="error_invalid_email">This email address is invalid</string>
     <string name="error_invalid_password">This password is too short</string>
