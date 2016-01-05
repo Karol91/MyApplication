@@ -71,6 +71,14 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.team.quattro.portfel.StartMenu" />
         </activity>
+        <activity
+            android:name=".HistoryOperationActivity"
+            android:label="@string/title_activity_history_operation"
+            android:parentActivityName=".wallet1" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.team.quattro.portfel.wallet1" />
+        </activity>
     </application>
 
 </manifest>

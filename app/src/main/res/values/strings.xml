@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="serverAddress">http://192.168.1.4:8080/BitCoinWallet/rest/</string>
 
+    <string name="serverAddress">http://192.168.1.5:8080/BitCoinWallet/rest/</string>
 
     <string name="strBit">BitCoin</string>
     <string name="strPLC">Nubits</string>
     <string name="strPEERCOIN">LiteCoin</string>
     <string name="strBC">BitCoin</string>
-
-    <string name="title_activity_wallet1">BitCoin</string>
+    <string name="title_activity_wallet1">Your wallet</string>
+    <string name="title_activity_history_operation">History Operation</string>
     <string name="title_activity_wallet2">LiteCoin</string>
     <string name="title_activity_wallet3">Nubits</string>
 
@@ -18,9 +18,7 @@
     <string name="registration">Sign up</string>
     <string name="title_activity_portfel_panel">Wallet Panel</string>
     <string name="password">Password</string>
-
     <string name="logowanie_rejestracja">Login</string>
-
     <string name="payment">Payment</string>
     <string name="withdraw">Payoff</string>
     <string name="operationStory">Operation history </string>
@@ -28,10 +26,11 @@
     <string name="balanceAccount">Balance account</string>
     <string name="chooseWallet">Choose wallet</string>
     <string name="loginPL">Login</string>
-
     <string name="welcomeString">Welcome</string>
     <string name="title_activity_registration">Registration</string>
     <string name="strEnterData">Please enter login and password</string>
     <string name="EnterData">Please enter login and password</string>
+
+
 
 </resources>

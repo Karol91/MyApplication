@@ -17,7 +17,8 @@
         android:id="@+id/editTextValue"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:inputType="number"
+        android:numeric="decimal"
+        android:digits="0123456789."
         android:ems="10">
 
         <requestFocus />

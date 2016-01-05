@@ -12,6 +12,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.TextView;
@@ -40,6 +41,8 @@ public class wallet1 extends ActionBarActivity {
     private EditText valueInput;
     private RadioButton radioBtnEx1;
     private RadioButton radioBtnEx2;
+    private DatePicker datePickerStart;
+    private DatePicker datePickerEnd;
 
     User userVO =null;
     Double value;
@@ -58,11 +61,12 @@ public class wallet1 extends ActionBarActivity {
         btnPayment.setOnClickListener(buttonPaymentHandler);
         btnPayoff.setOnClickListener(buttonPayoffHandler);
         btnExchange.setOnClickListener(buttonExchangeHandler);
+        btnOperationHistory.setOnClickListener(buttonOperationHistoryHandler);
 
         Intent intent = getIntent();
         userVO = (User) getIntent().getSerializableExtra("user");
         wallet = (Wallets) getIntent().getSerializableExtra("wallet");
-        textValue.setText(getResources().getString(R.string.balanceAccount)+ ": " +wallet.saldo );
+        textValue.setText(getResources().getString(R.string.balanceAccount)+ ": " + String.format("%.2f",wallet.saldo) + " "+ typeWallets(wallet.typeCoinId));
         //setTittle();
     }
 
@@ -124,6 +128,56 @@ public class wallet1 extends ActionBarActivity {
         }
     };
 
+    private View.OnClickListener buttonOperationHistoryHandler =  new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            LayoutInflater li = LayoutInflater.from(context);
+            View operationHistoryView = li.inflate(R.layout.history_operation_dialog, null);
+            radioBtnEx1 = (RadioButton) operationHistoryView.findViewById(R.id.radioBtnExchange);
+            radioBtnEx2 = (RadioButton) operationHistoryView.findViewById(R.id.radioBtnExchange2);
+            datePickerStart = (DatePicker) operationHistoryView.findViewById(R.id.datePickerStart);
+            datePickerEnd = (DatePicker) operationHistoryView.findViewById(R.id.datePickerEnd);
+            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
+                    context);
+            alertDialogBuilder.setView(operationHistoryView);
+            alertDialogBuilder
+                    .setCancelable(false)
+                    .setPositiveButton("Show history",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog,int id) {
+                                    int dayStart = datePickerStart.getDayOfMonth();
+                                    int monthStart = datePickerStart.getMonth();
+                                    String yearStart = String.valueOf(datePickerStart.getYear());
+                                    String dateStart = yearStart+"-"+checkDigit(monthStart+1)+"-"+checkDigit(dayStart);
+
+                                    int dayEnd = datePickerEnd.getDayOfMonth();
+                                    int  monthEnd = datePickerEnd.getMonth();
+                                    String yearEnd = String.valueOf(datePickerEnd.getYear());
+                                    String dateEnd = yearEnd+"-"+checkDigit(monthEnd+1)+"-"+checkDigit(dayEnd);
+
+                                    Intent intentHistoryOperation = new Intent(wallet1.this,HistoryOperationActivity.class);
+                                    if (!dateStart.isEmpty() && !dateEnd.isEmpty() && userVO!=null && wallet!=null) {
+                                        intentHistoryOperation.putExtra("date_start", dateStart);
+                                        intentHistoryOperation.putExtra("date_end", dateEnd);
+                                        intentHistoryOperation.putExtra("user", userVO);
+                                        intentHistoryOperation.putExtra("wallet", wallet);
+
+                                        startActivity(intentHistoryOperation);
+                                        finish();
+                                    }
+                                }
+                            })
+                    .setNegativeButton("Cancel",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog,int id) {
+                                    dialog.cancel();
+                                }
+                            });
+            AlertDialog alertDialog = alertDialogBuilder.create();
+            alertDialog.show();
+        }
+    };
+
     private View.OnClickListener buttonExchangeHandler =  new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -166,6 +220,11 @@ public class wallet1 extends ActionBarActivity {
             alertDialog.show();
         }
     };
+
+    public String checkDigit(int number)
+    {
+        return number<=9?"0"+number:String.valueOf(number);
+    }
 
     public ParserStatus parseXML( XmlPullParser parser ) throws XmlPullParserException, IOException {
 
@@ -280,7 +339,7 @@ public class wallet1 extends ActionBarActivity {
                 if (parserStatus.status.equals("0")) {
                     Toast.makeText(wallet1.this,"The payment was made",Toast.LENGTH_LONG).show();
                     wallet.saldo = wallet.saldo +value;
-                    textValue.setText(getResources().getString(R.string.balanceAccount)+ ": " +wallet.saldo );
+                    textValue.setText(getResources().getString(R.string.balanceAccount)+ ": " +String.format("%.2f",wallet.saldo) );
                 }
                 else
                     Toast.makeText(wallet1.this,"Something went wrong. Try again later.",Toast.LENGTH_LONG);
@@ -334,7 +393,7 @@ public class wallet1 extends ActionBarActivity {
                 if (parserStatus.status.equals("0")) {
                     Toast.makeText(wallet1.this,"The payoff was made.",Toast.LENGTH_LONG).show();
                     wallet.saldo = wallet.saldo - value;
-                    textValue.setText(getResources().getString(R.string.balanceAccount)+ ": " +wallet.saldo );
+                    textValue.setText(getResources().getString(R.string.balanceAccount)+ ": " +String.format("%.2f",wallet.saldo) );
                 }
                 else if (parserStatus.status.equals("2"))
                     Toast.makeText(wallet1.this,"You don't have enough money to make this operation.",Toast.LENGTH_LONG).show();
@@ -389,7 +448,7 @@ public class wallet1 extends ActionBarActivity {
                 if (parserStatus.status.equals("0")) {
                     Toast.makeText(wallet1.this,"The exchange was made.",Toast.LENGTH_LONG).show();
                     wallet.saldo = wallet.saldo - value;
-                    textValue.setText(getResources().getString(R.string.balanceAccount)+ ": " +wallet.saldo );
+                    textValue.setText(getResources().getString(R.string.balanceAccount)+ ": " +String.format("%.2f",wallet.saldo) );
                 }
                 else if (parserStatus.status.equals("2"))
                     Toast.makeText(wallet1.this,"You don't have enough money to make this operation.",Toast.LENGTH_LONG).show();
@@ -441,7 +500,28 @@ public class wallet1 extends ActionBarActivity {
 
         }
 
+    }
+    private String typeWallets(int typeCoinId)
+    {
+        String typeWalletStr = null;
+        switch (wallet.typeCoinId)
+        {
+            case 1: {
+                typeWalletStr = "BitCoin";
+                break;
+            }
+            case 2: {
+                typeWalletStr ="LiteCoin";
+                break;
+            }
+            case 3: {
+                typeWalletStr ="Nubits";
+                break;
+            }
 
+        }
+
+        return typeWalletStr;
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -465,8 +545,6 @@ public class wallet1 extends ActionBarActivity {
         if (id == android.R.id.home) {
             onBackPressed();
         }
-
-
         return super.onOptionsItemSelected(item);
     }
     @Override
