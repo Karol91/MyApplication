@@ -33,6 +33,8 @@ public class StartMenu extends ActionBarActivity {
         btnRegistration =(Button) findViewById(R.id.imgBtnRegistration);
         btnLogin.setOnClickListener(myOnlyhandler);
         btnRegistration.setOnClickListener(myOnlyhandler);
+        btnLogin.setEnabled(false);
+        btnRegistration.setEnabled(false);
         new ConnectedToServer().execute();
     }
 
@@ -94,6 +96,11 @@ public class StartMenu extends ActionBarActivity {
                     Alert("Connect Error", "Check Internet connection");
 
                 }
+            if (isConnected)
+            {
+                btnLogin.setEnabled(true);
+                btnRegistration.setEnabled(true);
+            }
         }
     }
     public void Alert (String title, String errorMessage)

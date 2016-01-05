@@ -220,9 +220,7 @@ public class portfelPanel extends ActionBarActivity {
         //String urlString = serverAddress + "walletService/getWallet?l=" + login+ "&typeCoin=1";
         InputStream in = null;
         EnumClass.noYes authentication = null;
-
-
-        Wallets walletVO = null;
+;
         String urlString = null;
 
         @Override
@@ -245,6 +243,7 @@ public class portfelPanel extends ActionBarActivity {
             btn3Wallet.setEnabled(true);
         }
         }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

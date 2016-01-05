@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -43,10 +44,14 @@ public class wallet1 extends ActionBarActivity {
     private RadioButton radioBtnEx2;
     private DatePicker datePickerStart;
     private DatePicker datePickerEnd;
+    private TextView txtCoin1;
+    private TextView txtCoin2;
+    private TextView txtCoin3;
 
     User userVO =null;
     Double value;
     Wallets wallet = null;
+    ArrayList<GetCoin> getCoinArrayList = new ArrayList<>();
 
 
     @Override
@@ -67,6 +72,7 @@ public class wallet1 extends ActionBarActivity {
         userVO = (User) getIntent().getSerializableExtra("user");
         wallet = (Wallets) getIntent().getSerializableExtra("wallet");
         textValue.setText(getResources().getString(R.string.balanceAccount)+ ": " + String.format("%.2f",wallet.saldo) + " "+ typeWallets(wallet.typeCoinId));
+        new GetCoinTask().execute();
         //setTittle();
     }
 
@@ -137,6 +143,7 @@ public class wallet1 extends ActionBarActivity {
             radioBtnEx2 = (RadioButton) operationHistoryView.findViewById(R.id.radioBtnExchange2);
             datePickerStart = (DatePicker) operationHistoryView.findViewById(R.id.datePickerStart);
             datePickerEnd = (DatePicker) operationHistoryView.findViewById(R.id.datePickerEnd);
+
             AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
                     context);
             alertDialogBuilder.setView(operationHistoryView);
@@ -185,6 +192,14 @@ public class wallet1 extends ActionBarActivity {
             View exchangeView = li.inflate(R.layout.exchange_dialog, null);
             radioBtnEx1 = (RadioButton) exchangeView.findViewById(R.id.radioBtnExchange);
             radioBtnEx2 = (RadioButton) exchangeView.findViewById(R.id.radioBtnExchange2);
+            txtCoin1 = (TextView) exchangeView.findViewById(R.id.txtViewCoin1);
+            txtCoin2 = (TextView) exchangeView.findViewById(R.id.txtViewCoin2);
+            txtCoin3 = (TextView) exchangeView.findViewById(R.id.txtViewCoin3);
+            if (getCoinArrayList!=null) {
+                txtCoin1.setText(getCoinArrayList.get(0).getName() + "     " + getCoinArrayList.get(0).getExchangeDolar().toString());
+                txtCoin2.setText(getCoinArrayList.get(1).getName() + "   " + getCoinArrayList.get(1).getExchangeDolar().toString());
+                txtCoin3.setText(getCoinArrayList.get(2).getName() + "      " + getCoinArrayList.get(2).getExchangeDolar().toString());
+            }
             if (wallet.typeCoinId==1) {
                 radioBtnEx1.setText("LiteCoin");
                 radioBtnEx2.setText("Nubits");
@@ -523,6 +538,133 @@ public class wallet1 extends ActionBarActivity {
 
         return typeWalletStr;
     }
+
+    public GetCoin getCoinParseXML( XmlPullParser parser ) throws XmlPullParserException, IOException {
+
+        int eventType = parser.getEventType();
+        GetCoin result = new GetCoin();
+
+        while( eventType!= XmlPullParser.END_DOCUMENT) {
+            String name = null;
+
+            switch(eventType)
+            {
+                case XmlPullParser.START_TAG:
+                    name = parser.getName();
+
+                    if ( name.equals("exchangeDolar")) {
+                        result.setExchangeDolar(Double.parseDouble(parser.nextText()));
+                        break;
+                    }
+                    if ( name.equals("name")) {
+                        result.setName(parser.nextText());
+                        break;
+                    }
+                    if ( name.equals("status")) {
+                        result.setStatus(parser.nextText());
+                        break;
+                    }
+
+                    break;
+                case XmlPullParser.END_TAG:
+                    break;
+            }
+            eventType = parser.next();
+        }
+        return result;
+    }
+
+    public GetCoin getCoinSendAndParseHTTP (String urlString, EnumClass.noYes authentication, String restKey)
+    {
+        InputStream in = null;
+        GetCoin getCoinVO = null;
+        HttpURLConnection urlConnection =null;
+        try {
+
+            URL url = new URL(urlString);
+            urlConnection = (HttpURLConnection) url.openConnection();
+            if (authentication== EnumClass.noYes.TAK)
+            {
+                urlConnection.setRequestMethod("GET");
+                urlConnection.setRequestProperty("Content-Type", "application/xml");
+                urlConnection.setRequestProperty("REST_KEY", restKey);
+                urlConnection.setDoOutput(false);
+            }
+            Integer code =urlConnection.getResponseCode();
+            if(code >= HttpStatus.SC_BAD_REQUEST)
+                in = urlConnection.getErrorStream();
+            else
+                in = urlConnection.getInputStream();
+        } catch (Exception e) {
+
+        }
+
+        XmlPullParserFactory pullParserFactory;
+        try {
+            pullParserFactory = XmlPullParserFactory.newInstance();
+            XmlPullParser parser = pullParserFactory.newPullParser();
+            parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false);
+            parser.setInput(in, null);
+            getCoinVO = getCoinParseXML(parser);
+
+            in.close();
+        } catch (XmlPullParserException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        finally{
+            urlConnection.disconnect();
+        }
+        return getCoinVO;
+    }
+
+    public class GetCoinTask extends AsyncTask<Void, Void, ArrayList<GetCoin>> {
+
+        @Override
+        protected ArrayList<GetCoin> doInBackground(Void... params) {
+
+
+            String serverAddress = getResources().getString(R.string.serverAddress);
+            List<String> status = null;
+            String urlString = null;
+            EnumClass.noYes authentication=null;
+
+
+            GetCoin getCoinVO1 = null;
+            GetCoin getCoinVO2 = null;
+            GetCoin getCoinVO3 = null;
+
+            //String restKey = userVO.restKey;
+            urlString = serverAddress + "typeCoinService/getCoin?name=BitCoin";
+            getCoinVO1 = getCoinSendAndParseHTTP(urlString, authentication.NIE,null);
+            getCoinArrayList.add(getCoinVO1);
+            urlString = serverAddress + "typeCoinService/getCoin?name=LiteCoin";
+            getCoinVO2 = getCoinSendAndParseHTTP(urlString, authentication.NIE,null);
+            getCoinArrayList.add(getCoinVO2);
+            urlString = serverAddress + "typeCoinService/getCoin?name=Nubits";
+            getCoinVO3 = getCoinSendAndParseHTTP(urlString, authentication.NIE,null);
+            getCoinArrayList.add(getCoinVO3);
+            return getCoinArrayList;
+        }
+
+
+        @Override
+        protected void onPostExecute(ArrayList<GetCoin> getCoinArrayList) {
+
+            //showProgress(false);
+            /*if (parserStatus != null) {
+                if (parserStatus.status.equals("0")) {
+                    Toast.makeText(wallet1.this, "The payment was made", Toast.LENGTH_LONG).show();
+                    wallet.saldo = wallet.saldo +value;
+                    textValue.setText(getResources().getString(R.string.balanceAccount)+ ": " +String.format("%.2f",wallet.saldo) );
+                }
+                else
+                    Toast.makeText(wallet1.this,"Something went wrong. Try again later.",Toast.LENGTH_LONG);
+            }*/
+        }
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.

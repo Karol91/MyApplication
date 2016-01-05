@@ -125,7 +125,9 @@ public class HistoryOperationActivity extends ActionBarActivity {
                         while (operation) {
 
                             if (name.equals("date")) {
-                                historyOperation.setDate(parser.nextText());
+                                String dateStr = parser.nextText();
+                                int index = dateStr.indexOf("T");
+                                historyOperation.setDate(dateStr.substring(0,index));
                             }
                             else if (name.equals("typeOperationName")) {
                                 historyOperation.setTypeOperationName(parser.nextText());
